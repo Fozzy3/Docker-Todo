@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  db:
+    build: .
+    container_name: mysql_container
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: tareas_db
+    ports:
+      - "3306:3306"
+
+  backend:
+    image: node:latest
+    container_name: backend_container
+    working_dir: /app
+    volumes:
+      - ./server:/app
+    depends_on:
+      - db
+    command: sh -c "npm install && npm start"
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: password
+      DB_NAME: tareas_db
+    ports:
+      - "3000:3000"
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: client_container
+    working_dir: /app
+    volumes:
+      - ./client:/app
+    ports:
+      - "3001:3001"
+    command: sh -c "npm install && npm run dev"
+    depends_on:
+      - backend

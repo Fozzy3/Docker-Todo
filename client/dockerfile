@@ -1,0 +1,20 @@
+# Establece la imagen base
+FROM node:16
+
+# Establece el directorio de trabajo en el contenedor
+WORKDIR /app
+
+# Copia los archivos de la aplicación
+COPY . .
+
+# Instala las dependencias
+RUN npm install
+
+# Construye la aplicación para producción
+RUN npm run build
+
+# Expone el puerto que el contenedor usará para servir la aplicación
+EXPOSE 3001
+
+# Comando para ejecutar la aplicación
+CMD ["npm", "run", "preview"]
